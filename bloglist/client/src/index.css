@@ -1,4 +1,4 @@
-.app{
+.app {
   display: flex;
   margin-left: auto;
   margin-right: auto;
@@ -6,14 +6,14 @@
   flex-direction: column;
   padding: 1%;
 }
-.remove{
+.remove {
   background-color: red;
   color: white;
   border-radius: 5px;
 }
 
 .success {
-    color: rgb(45, 152, 40);
+  color: rgb(45, 152, 40);
   background: rgb(210, 208, 208);
   font-size: 20px;
   border-style: solid;
@@ -23,7 +23,7 @@
 }
 
 .error {
-    color: rgb(255, 0, 0);
+  color: rgb(255, 0, 0);
   background: rgb(198, 193, 193);
   font-size: 20px;
   border-style: solid;
@@ -32,10 +32,10 @@
   margin-bottom: 10px;
 }
 
-.blogCard{
+.blogCard {
   display: flex;
   flex-direction: column;
-  
+
   background-color: antiquewhite;
   margin-left: auto;
   margin-right: auto;
@@ -45,6 +45,4 @@
   border-style: solid;
   padding: 1%;
   margin-top: 2%;
-  
-  
 }
