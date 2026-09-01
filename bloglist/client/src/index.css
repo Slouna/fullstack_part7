@@ -1,0 +1,50 @@
+.app{
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  flex-direction: column;
+  padding: 1%;
+}
+.remove{
+  background-color: red;
+  color: white;
+  border-radius: 5px;
+}
+
+.success {
+    color: rgb(45, 152, 40);
+  background: rgb(210, 208, 208);
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.error {
+    color: rgb(255, 0, 0);
+  background: rgb(198, 193, 193);
+  font-size: 20px;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.blogCard{
+  display: flex;
+  flex-direction: column;
+  
+  background-color: antiquewhite;
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
+  border-radius: 10px;
+  border-color: black;
+  border-style: solid;
+  padding: 1%;
+  margin-top: 2%;
+  
+  
+}

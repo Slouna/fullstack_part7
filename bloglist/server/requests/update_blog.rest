@@ -1,0 +1,9 @@
+PUT  http://localhost:3003/api/blogs/6a7d9dd77c176e70dced6c45
+Content-Type: application/json
+
+{
+    "title": "Palindromit",
+    "author": "Simo frangen",
+    "url": "simonsivut.com",
+    "likes": 5
+}
