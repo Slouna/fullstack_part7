@@ -9,7 +9,8 @@ import NewBlogForm from './components/NewBlogForm'
 import LoginForm from './components/LoginForm'
 import { AppBar, Container, Toolbar, Button } from '@mui/material'
 import MainPage from './components/MainPage'
-
+import ErrorBoundary from './components/ErrorBoundary'
+import SplatRoute from './components/SplatRoute'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -123,28 +124,30 @@ const App = () => {
             </Toolbar>
 
           </AppBar>
-          <Notification message={message} success = {success}/>
-          <Routes>
-            {// different params if user is not logged in
-            }
-            {user && <Route path="/blogs/:id" element={ blog
-              ?
-              <Blog blog={blog} updateBlog={updateBlog} removeBlog ={removeBlog} userId={user.id}/>
-              : <p>Could not find a blog</p>
-            } />}
-            {!user && <Route path="/blogs/:id" element={
-              <Blog blog={blog} updateBlog={updateBlog} removeBlog ={removeBlog} userId={null}/>
-            } />}
+          <ErrorBoundary>
+            <Notification message={message} success = {success}/>
+            <Routes>
+              {// different params if user is not logged in
+              }
+              {user && <Route path="/blogs/:id" element={ blog
+                ?
+                <Blog blog={blog} updateBlog={updateBlog} removeBlog ={removeBlog} userId={user.id}/>
+                : <p>Could not find a blog</p>
+              } />}
+              {!user && <Route path="/blogs/:id" element={
+                <Blog blog={blog} updateBlog={updateBlog} removeBlog ={removeBlog} userId={null}/>
+              } />}
 
-            <Route path="/login" element={
-              <LoginForm setUser={setUser} setMessage={setMessage} setSuccess={setSuccess}/>
-            } />
-            <Route path="/create" element={
-              <NewBlogForm createBlog={addBlog}/>
-            } />
-            <Route path="/" element={<MainPage />} />
-          </Routes>
-
+              <Route path="/login" element={
+                <LoginForm setUser={setUser} setMessage={setMessage} setSuccess={setSuccess}/>
+              } />
+              <Route path="/create" element={
+                <NewBlogForm createBlog={addBlog}/>
+              } />
+              <Route path="/" element={<MainPage />} />
+              <Route path='*' element={<SplatRoute />} />
+            </Routes>
+          </ErrorBoundary>
         </div>
       </div>
     </Container>
