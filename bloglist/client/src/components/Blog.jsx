@@ -1,33 +1,46 @@
-import Togglable from "./Togglable";
+
 import RegularButton from "./RegularButton";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
+import { useBlogActions, useBlogs } from "../store";
+import { useNotificationActions } from "../store";
 
-/*
-I noticed the hint to  not use togglable after I had done this,
-I will fix it if needed later in the material
-But I think it works now as it should
-*/
-const Blog = ({ blog, updateBlog, removeBlog, userId }) => {
+
+const Blog = ({ userId }) => {
   const navigate = useNavigate();
+  const { deleteBlog, like } = useBlogActions()
+  const { setNotification, setSuccessStatus } = useNotificationActions()
+  const blogs = useBlogs()
+  const {id} = useParams()
 
-  console.log("Blog received:", blog);
+  const blog = blogs.find(blog => blog.id === id)
+
+  if (!blog) {
+    return <p>Loading...</p>
+  }
+
 
   const handleLike = async (blog) => {
-    //event.preventDefault()
-    const updatedBlog = blog;
-    updatedBlog.likes += 1;
-    //blogService.update(blog.id, updatedBlog)
-    updateBlog(updatedBlog);
+    await like(blog.id)
   };
 
+  //virheiden käsittely
   const handleRemove = async (blog) => {
-    await removeBlog(blog);
-    navigate("/");
+    if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
+      await deleteBlog(blog.id)
+      await setSuccessStatus(true);
+      await setNotification(`${blog.title} deleted!`)
+      
+      
+      setTimeout(() => {
+        setNotification(null);
+      }, 5000);
+      navigate("/");
+    }
+    
   };
 
-  console.log(userId);
   return (
     <div className="blogCard">
       <p style={{ fontSize: 30 }}>{blog.title}</p>

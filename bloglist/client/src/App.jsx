@@ -9,18 +9,20 @@ import { AppBar, Container, Toolbar, Button } from "@mui/material";
 import MainPage from "./components/MainPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SplatRoute from "./components/SplatRoute";
-import { useNotificationActions } from "./store";
+import { useBlogs, useNotificationActions } from "./store";
+import { useBlogActions } from "./store";
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
+  const blogs = useBlogs()
   const [user, setUser] = useState(null);
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
-  const {setNotification, setSuccessStatus} = useNotificationActions()
+  const { setNotification, setSuccessStatus } = useNotificationActions()
+  const {initialize} = useBlogActions()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
+    initialize();
+  }, [initialize]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -31,34 +33,6 @@ const App = () => {
     }
   }, []);
 
-  const addBlog = async (blogObject) => {
-    try {
-      const returnedBlog = await blogService.create(blogObject);
-      console.log(returnedBlog);
-      setBlogs(blogs.concat(returnedBlog));
-      //addBlogRef.current.toggleVisibility()
-      await setSuccessStatus(true)
-      await setNotification(
-        `A new blog: ${blogObject.title}, by ${blogObject.author} added to to blog list!`,
-      );
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    } catch (error) {
-      console.log(error);
-      setSuccessStatus(false);
-      setNotification("Adding new blog failed");
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    }
-  };
-
-  const updateBlog = async (blogObject) => {
-    await blogService.update(blogObject.id, blogObject);
-    const response = await blogService.getAll();
-    setBlogs(response);
-  };
 
   const removeBlog = async (blog) => {
     if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
@@ -81,10 +55,6 @@ const App = () => {
         setNotification(null);
       }, 5000);
     }
-
-    const allBlogs = await blogService.getAll();
-
-    setBlogs(allBlogs);
   };
 
   const handleLogOut = () => {
@@ -156,36 +126,19 @@ const App = () => {
               {
                 // different params if user is not logged in
               }
-              {user && (
+              
                 <Route
                   path="/blogs/:id"
                   element={
                     blog ? (
                       <Blog
-                        blog={blog}
-                        updateBlog={updateBlog}
-                        removeBlog={removeBlog}
-                        userId={user.id}
+                        userId={user?.id}
                       />
                     ) : (
                       <p>Could not find a blog</p>
                     )
                   }
                 />
-              )}
-              {!user && (
-                <Route
-                  path="/blogs/:id"
-                  element={
-                    <Blog
-                      blog={blog}
-                      updateBlog={updateBlog}
-                      removeBlog={removeBlog}
-                      userId={null}
-                    />
-                  }
-                />
-              )}
 
               <Route
                 path="/login"
@@ -199,7 +152,7 @@ const App = () => {
               />
               <Route
                 path="/create"
-                element={<NewBlogForm createBlog={addBlog} />}
+                element={<NewBlogForm/>}
               />
               <Route path="/" element={<MainPage />} />
               <Route path="*" element={<SplatRoute />} />
