@@ -8,16 +8,16 @@ import NewBlogForm from "./NewBlogForm";
 import LoginForm from "./LoginForm";
 import BlogList from "./BlogList";
 import { AppBar, Container, Toolbar, Button, colors } from "@mui/material";
+import {useNotificationActions} from '../store'
 
 const MainPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [success, setSuccess] = useState(true);
   const addBlogRef = useRef();
   const navigate = useNavigate();
+  const {setNotification, setSuccessStatus} = useNotificationActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -46,17 +46,17 @@ const MainPage = () => {
         console.log("what");
       }
       if (response === 400) {
-        setSuccess(false);
-        setMessage("You cannot remove blogs that other users have added");
+        setSuccessStatus(false);
+        setNotification("You cannot remove blogs that other users have added");
       } else if (response === 401) {
-        setSuccess(false);
-        setMessage("Invalid token");
+        setSuccessStatus(false);
+        setNotification("Invalid token");
       } else {
-        setSuccess(true);
-        setMessage(`${blog.title} deleted!`);
+        setSuccessStatus(true);
+        setNotification(`${blog.title} deleted!`);
       }
       setTimeout(() => {
-        setMessage(null);
+        setNotification(null);
       }, 5000);
     }
     const allBlogs = await blogService.getAll();

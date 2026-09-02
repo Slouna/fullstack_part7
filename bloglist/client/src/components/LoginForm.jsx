@@ -3,11 +3,13 @@ import { useNavigate } from "react-router-dom";
 import blogService from "../services/blogs";
 import loginService from "../services/login";
 import { TextField, Button } from "@mui/material";
+import {useNotificationActions} from '../store'
 
 const LoginForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   //const [user, setUser] = useState(null)
+  const {setNotification, setSuccessStatus} = useNotificationActions()
 
   const navigate = useNavigate();
 
@@ -21,19 +23,19 @@ const LoginForm = (props) => {
 
       blogService.setToken(user.token);
       props.setUser(user);
-      props.setSuccess(true);
-      props.setMessage(`${user.name} logged in`);
+      setSuccessStatus(true);
+      setNotification(`${user.name} logged in`);
       setTimeout(() => {
-        props.setMessage(null);
+        setNotification(null);
       }, 5000);
       setUsername("");
       setPassword("");
       navigate("/");
     } catch {
-      props.setSuccess(false);
-      props.setMessage("Wrong username or password");
+      setSuccessStatus(false);
+      setNotification("Wrong username or password");
       setTimeout(() => {
-        props.setMessage(null);
+        setNotification(null);
       }, 5000);
     }
   };

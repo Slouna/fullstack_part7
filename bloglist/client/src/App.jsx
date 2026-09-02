@@ -9,14 +9,14 @@ import { AppBar, Container, Toolbar, Button } from "@mui/material";
 import MainPage from "./components/MainPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SplatRoute from "./components/SplatRoute";
+import { useNotificationActions } from "./store";
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [message, setMessage] = useState(null);
-  const [success, setSuccess] = useState(true);
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
+  const {setNotification, setSuccessStatus} = useNotificationActions()
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -37,19 +37,19 @@ const App = () => {
       console.log(returnedBlog);
       setBlogs(blogs.concat(returnedBlog));
       //addBlogRef.current.toggleVisibility()
-      setSuccess(true);
-      setMessage(
+      await setSuccessStatus(true)
+      await setNotification(
         `A new blog: ${blogObject.title}, by ${blogObject.author} added to to blog list!`,
       );
       setTimeout(() => {
-        setMessage(null);
+        setNotification(null);
       }, 5000);
     } catch (error) {
       console.log(error);
-      setSuccess(false);
-      setMessage("Adding new blog failed");
+      setSuccessStatus(false);
+      setNotification("Adding new blog failed");
       setTimeout(() => {
-        setMessage(null);
+        setNotification(null);
       }, 5000);
     }
   };
@@ -65,20 +65,20 @@ const App = () => {
       const response = await blogService.deleteBlog(blog.id);
       console.log(response);
       if (response === 400) {
-        setSuccess(false);
-        setMessage("You cannot remove blogs that other users have added");
+        setSuccessStatus(false);
+        setNotification("You cannot remove blogs that other users have added");
       } else if (response === 401) {
-        setSuccess(false);
-        setMessage("Invalid token");
+        setSuccessStatus(false);
+        setNotification("Invalid token");
       } else if (response === 204) {
-        setSuccess(true);
-        setMessage(`${blog.title} deleted!`);
+        setSuccessStatus(true);
+        setNotification(`${blog.title} deleted!`);
       } else {
-        setSuccess(false);
-        setMessage("Uncaught error");
+        setSuccessStatus(false);
+        setNotification("Uncaught error");
       }
       setTimeout(() => {
-        setMessage(null);
+        setNotification(null);
       }, 5000);
     }
 
@@ -151,7 +151,7 @@ const App = () => {
             </Toolbar>
           </AppBar>
           <ErrorBoundary>
-            <Notification message={message} success={success} />
+            <Notification />
             <Routes>
               {
                 // different params if user is not logged in
@@ -192,8 +192,8 @@ const App = () => {
                 element={
                   <LoginForm
                     setUser={setUser}
-                    setMessage={setMessage}
-                    setSuccess={setSuccess}
+                    setNotification={setNotification}
+                    setSuccessStatus={setSuccessStatus}
                   />
                 }
               />
