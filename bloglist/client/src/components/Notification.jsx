@@ -2,8 +2,8 @@ import { Alert } from "@mui/material";
 import { useNotifications, useSuccessStatus } from "../store";
 
 const Notification = () => {
-  const notification = useNotifications()
-  const success = useSuccessStatus()
+  const notification = useNotifications();
+  const success = useSuccessStatus();
   if (notification === null) {
     return null;
   }

@@ -8,7 +8,7 @@ import NewBlogForm from "./NewBlogForm";
 import LoginForm from "./LoginForm";
 import BlogList from "./BlogList";
 import { AppBar, Container, Toolbar, Button, colors } from "@mui/material";
-import {useNotificationActions} from '../store'
+import { useNotificationActions } from "../store";
 
 const MainPage = () => {
   const [blogs, setBlogs] = useState([]);
@@ -17,7 +17,7 @@ const MainPage = () => {
   const [user, setUser] = useState(null);
   const addBlogRef = useRef();
   const navigate = useNavigate();
-  const {setNotification, setSuccessStatus} = useNotificationActions()
+  const { setNotification, setSuccessStatus } = useNotificationActions();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));

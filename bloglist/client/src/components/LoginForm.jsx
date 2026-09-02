@@ -1,37 +1,37 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import blogService from "../services/blogs";
-import loginService from "../services/login";
 import { TextField, Button } from "@mui/material";
-import {useNotificationActions} from '../store'
+import { useNotificationActions } from "../store";
+import { useUserActions } from "../store";
+import { useCurrentUser } from "../store";
 
 const LoginForm = (props) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  //const [user, setUser] = useState(null)
-  const {setNotification, setSuccessStatus} = useNotificationActions()
+  const { setNotification, setSuccessStatus } = useNotificationActions();
+  const { logIn } = useUserActions();
+  const user = useCurrentUser();
 
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
-
     try {
-      const user = await loginService.login({ username, password });
-      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-      console.log(username);
+      const loggedUser = await logIn(username, password);
 
-      blogService.setToken(user.token);
-      props.setUser(user);
-      setSuccessStatus(true);
-      setNotification(`${user.name} logged in`);
+      await setSuccessStatus(true);
+      await setNotification(`${loggedUser.name} logged in`);
+
       setTimeout(() => {
         setNotification(null);
       }, 5000);
+
       setUsername("");
       setPassword("");
+
       navigate("/");
-    } catch {
+    } catch (error) {
+      console.log(error);
       setSuccessStatus(false);
       setNotification("Wrong username or password");
       setTimeout(() => {
@@ -47,7 +47,7 @@ const LoginForm = (props) => {
         <div>
           <TextField
             label="Username"
-            value={props.username}
+            value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
@@ -55,7 +55,7 @@ const LoginForm = (props) => {
           <TextField
             label="Password"
             type="password"
-            value={props.password}
+            value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>

@@ -86,7 +86,7 @@ blogsRouter.put("/:id", async (request, response) => {
   oldBlog.likes = updatedBlog.likes;
 
   await oldBlog.save();
-  await oldBlog.populate('user')
+  await oldBlog.populate("user");
   response.json(oldBlog);
 });
 

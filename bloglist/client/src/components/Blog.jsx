@@ -1,4 +1,3 @@
-
 import RegularButton from "./RegularButton";
 import { Link, useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -6,39 +5,52 @@ import { TextField, Button } from "@mui/material";
 import { useBlogActions, useBlogs } from "../store";
 import { useNotificationActions } from "../store";
 
-
 const Blog = ({ userId }) => {
   const navigate = useNavigate();
-  const { deleteBlog, like } = useBlogActions()
-  const { setNotification, setSuccessStatus } = useNotificationActions()
-  const blogs = useBlogs()
-  const {id} = useParams()
+  const { deleteBlog, like } = useBlogActions();
+  const { setNotification, setSuccessStatus } = useNotificationActions();
+  const blogs = useBlogs();
+  const { id } = useParams();
 
-  const blog = blogs.find(blog => blog.id === id)
+  const blog = blogs.find((blog) => blog.id === id);
 
   if (!blog) {
-    return <p>Loading...</p>
+    return <p>Loading...</p>;
   }
 
-
   const handleLike = async (blog) => {
-    await like(blog.id)
+    await like(blog.id);
+    setNotification(`Blog '${blog.title}' liked`);
+    setSuccessStatus(true);
+
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   //virheiden käsittely
   const handleRemove = async (blog) => {
     if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
-      await deleteBlog(blog.id)
-      await setSuccessStatus(true);
-      await setNotification(`${blog.title} deleted!`)
-      
-      
+      const response = await deleteBlog(blog.id);
+      console.log(response);
+      if (response === 400) {
+        setSuccessStatus(false);
+        setNotification("You cannot remove blogs that other users have added");
+      } else if (response === 401) {
+        setSuccessStatus(false);
+        setNotification("Invalid token");
+      } else if (response === 204) {
+        setSuccessStatus(true);
+        setNotification(`${blog.title} deleted!`);
+      } else {
+        setSuccessStatus(false);
+        setNotification("Uncaught error");
+      }
       setTimeout(() => {
         setNotification(null);
       }, 5000);
-      navigate("/");
     }
-    
+    navigate("/");
   };
 
   return (

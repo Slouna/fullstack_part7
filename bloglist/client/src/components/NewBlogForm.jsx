@@ -7,7 +7,7 @@ import { useNotificationActions } from "../store";
 const NewBlogForm = () => {
   const navigate = useNavigate();
   const { add } = useBlogActions();
-  const { setNotification, setSuccessStatus } = useNotificationActions()
+  const { setNotification, setSuccessStatus } = useNotificationActions();
 
   const [blogTitle, setBlogTitle] = useState("");
   const [blogAuthor, setBlogAuthor] = useState("");
@@ -21,7 +21,7 @@ const NewBlogForm = () => {
         author: blogAuthor,
         url: blogUrl,
       });
-      await setSuccessStatus(true)
+      await setSuccessStatus(true);
       await setNotification(
         `A new blog: ${blogTitle}, by ${blogAuthor} added to to blog list!`,
       );
@@ -29,7 +29,7 @@ const NewBlogForm = () => {
         setNotification(null);
       }, 5000);
     } catch (e) {
-      console.log(e)
+      console.log(e);
       setSuccessStatus(false);
       setNotification("Adding new blog failed");
       setTimeout(() => {
