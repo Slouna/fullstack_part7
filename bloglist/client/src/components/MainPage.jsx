@@ -1,95 +1,25 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { Routes, Route, Link, useMatch } from "react-router-dom";
-import Blog from "./Blog";
-import blogService from "../services/blogs";
-import Notification from "./Notification";
-import NewBlogForm from "./NewBlogForm";
-import LoginForm from "./LoginForm";
-import BlogList from "./BlogList";
-import { AppBar, Container, Toolbar, Button, colors } from "@mui/material";
-import { useNotificationActions } from "../store";
+import { Link } from "react-router-dom";
+import { useBlogs, useCurrentUser } from "../store";
 
 const MainPage = () => {
-  const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useState(null);
-  const addBlogRef = useRef();
-  const navigate = useNavigate();
-  const { setNotification, setSuccessStatus } = useNotificationActions();
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
-  }, []);
-
-  useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON);
-      setUser(user);
-      blogService.setToken(user.token);
-    }
-  }, []);
-
-  const updateBlog = async (blogObject) => {
-    await blogService.update(blogObject.id, blogObject);
-    const response = await blogService.getAll();
-    setBlogs(response);
-  };
-
-  const removeBlog = async (blog) => {
-    if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
-      const response = await blogService.deleteBlog(blog.id);
-      console.log(response);
-      if (response === 0) {
-        console.log("what");
-      }
-      if (response === 400) {
-        setSuccessStatus(false);
-        setNotification("You cannot remove blogs that other users have added");
-      } else if (response === 401) {
-        setSuccessStatus(false);
-        setNotification("Invalid token");
-      } else {
-        setSuccessStatus(true);
-        setNotification(`${blog.title} deleted!`);
-      }
-      setTimeout(() => {
-        setNotification(null);
-      }, 5000);
-    }
-    const allBlogs = await blogService.getAll();
-    setBlogs(allBlogs);
-  };
+  const blogs = useBlogs();
+  const user = useCurrentUser();
 
   return (
     <div className="app">
       <div>
         <h2>blogs</h2>
-        {user &&
-          blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <BlogList
-                key={blog.id}
-                blog={blog}
-                updateBlog={updateBlog}
-                removeBlog={removeBlog}
-                userId={user.id}
-              />
-            ))}
-        {!user &&
-          blogs
-            .sort((a, b) => b.likes - a.likes)
-            .map((blog) => (
-              <BlogList
-                key={blog.id}
-                blog={blog}
-                updateBlog={updateBlog}
-                removeBlog={removeBlog}
-              />
-            ))}
+        {blogs
+          .sort((a, b) => b.likes - a.likes)
+          .map((blog) => (
+            <div key={blog.id}>
+              <li key={blog.id}>
+                <Link to={`/blogs/${blog.id}`}>
+                  {blog.title} by {blog.author}
+                </Link>
+              </li>
+            </div>
+          ))}
       </div>
     </div>
   );

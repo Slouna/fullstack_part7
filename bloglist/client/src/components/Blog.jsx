@@ -4,13 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
 import { useBlogActions, useBlogs } from "../store";
 import { useNotificationActions } from "../store";
+import { useCurrentUser } from "../store";
 
-const Blog = ({ userId }) => {
+const Blog = () => {
   const navigate = useNavigate();
   const { deleteBlog, like } = useBlogActions();
   const { setNotification, setSuccessStatus } = useNotificationActions();
   const blogs = useBlogs();
   const { id } = useParams();
+  const user = useCurrentUser();
+  let userId;
+  if (user) {
+    userId = user.id;
+  }
 
   const blog = blogs.find((blog) => blog.id === id);
 
@@ -28,7 +34,6 @@ const Blog = ({ userId }) => {
     }, 5000);
   };
 
-  //virheiden käsittely
   const handleRemove = async (blog) => {
     if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
       const response = await deleteBlog(blog.id);
@@ -97,24 +102,5 @@ const Blog = ({ userId }) => {
     </div>
   );
 };
-
-/*
-    <div className="blogCard">
-      <p>{blog.title} by {blog.author}</p>
-      <Togglable buttonLabel="view" closeLabel="Hide">
-        <p>{blog.url}</p>
-        <p>
-        Likes: {blog.likes}
-          {<RegularButton name= "Like" onClick={() => handleLike(blog)}/>}
-        </p>
-        <p>{blog.content}</p>
-        <p>{blog.user.name}</p>
-        {blog.user.id === userId &&
-        <p>{<RegularButton name="Remove" onClick={() => handleRemove(blog)} className="remove"/>}</p>
-        }
-
-      </Togglable>
-    </div>
-*/
 
 export default Blog;

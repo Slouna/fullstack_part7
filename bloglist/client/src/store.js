@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
+import persistentUser from "./services/persistentUser";
 
 const useNotificationStore = create((set) => ({
   notification: null,
@@ -17,25 +18,21 @@ const useCurrentUserStore = create(
     user: null,
     actions: {
       initializeUser: async () => {
-        const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
-        if (loggedUserJSON) {
-          const user = JSON.parse(loggedUserJSON);
+        const user = persistentUser.getUser();
+        if (user !== null) {
           blogService.setToken(user.token);
           set(() => ({ user }));
         }
       },
       logIn: async (username, password) => {
         const newLogin = await loginService.login({ username, password });
-        window.localStorage.setItem(
-          "loggedBlogappUser",
-          JSON.stringify(newLogin),
-        );
+        persistentUser.saveUser(newLogin);
         blogService.setToken(newLogin.token);
         set(() => ({ user: newLogin }));
         return newLogin;
       },
       logOut: () => {
-        window.localStorage.removeItem("loggedBlogappUser");
+        persistentUser.removeUser();
         set(() => ({ user: null }));
       },
     },

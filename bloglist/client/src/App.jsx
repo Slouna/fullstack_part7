@@ -1,7 +1,6 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Routes, Route, Link, useMatch } from "react-router-dom";
 import Blog from "./components/Blog";
-import blogService from "./services/blogs";
 import Notification from "./components/Notification";
 import NewBlogForm from "./components/NewBlogForm";
 import LoginForm from "./components/LoginForm";
@@ -9,8 +8,12 @@ import { AppBar, Container, Toolbar, Button } from "@mui/material";
 import MainPage from "./components/MainPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SplatRoute from "./components/SplatRoute";
-import { useBlogs, useNotificationActions, useUserActions } from "./store";
-import { useBlogActions } from "./store";
+import {
+  useBlogs,
+  useNotificationActions,
+  useUserActions,
+  useBlogActions,
+} from "./store";
 import { useCurrentUser } from "./store";
 
 const App = () => {
@@ -18,10 +21,10 @@ const App = () => {
   const match = useMatch("/blogs/:id");
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
   const { setNotification, setSuccessStatus } = useNotificationActions();
-  const { initialize } = useBlogActions();
   const user = useCurrentUser();
-  const { initializeUser } = useUserActions();
   const { logOut } = useUserActions();
+  const { initializeUser } = useUserActions();
+  const { initialize } = useBlogActions();
 
   useEffect(() => {
     initialize();
@@ -103,13 +106,7 @@ const App = () => {
             <Routes>
               <Route
                 path="/blogs/:id"
-                element={
-                  blog ? (
-                    <Blog userId={user?.id} />
-                  ) : (
-                    <p>Could not find a blog</p>
-                  )
-                }
+                element={blog ? <Blog /> : <p>Could not find a blog</p>}
               />
 
               <Route
