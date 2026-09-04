@@ -4,10 +4,11 @@ import { TextField, Button } from "@mui/material";
 import { useBlogActions, useBlogs } from "../store";
 import { useNotificationActions } from "../store";
 import { useCurrentUser } from "../store";
+import { useField } from "../hooks";
 
 const Blog = () => {
   const navigate = useNavigate();
-  const { deleteBlog, like } = useBlogActions();
+  const { deleteBlog, like, comment } = useBlogActions();
   const { setNotification, setSuccessStatus } = useNotificationActions();
   const blogs = useBlogs();
   const { id } = useParams();
@@ -16,6 +17,7 @@ const Blog = () => {
   if (user) {
     userId = user.id;
   }
+  const newComment = useField("text");
 
   const blog = blogs.find((blog) => blog.id === id);
 
@@ -33,6 +35,7 @@ const Blog = () => {
     }, 5000);
   };
 
+  console.log(blog.comments[0]);
   const handleRemove = async (blog) => {
     if (window.confirm(`Do you want to remove the blog: ${blog.title} `)) {
       const response = await deleteBlog(blog.id);
@@ -55,6 +58,17 @@ const Blog = () => {
       }, 5000);
     }
     navigate("/");
+  };
+
+  const addComment = async (event) => {
+    event.preventDefault();
+    comment(blog.id, { value: newComment.value });
+    setNotification(`Comment '${newComment.value}' added`);
+    setSuccessStatus(true);
+
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000);
   };
 
   return (
@@ -98,6 +112,22 @@ const Blog = () => {
           </div>
         )}
       </div>
+      <p style={{ fontSize: 25 }}>comments</p>
+      <form onSubmit={addComment}>
+        <div>
+          Add comment
+          <input {...newComment} />
+        </div>
+        <Button type="submit" variant="contained">
+          Send
+        </Button>
+      </form>
+
+      {blog.comments.map((comment) => (
+        <div key={comment}>
+          <li key={comment}>{comment}</li>
+        </div>
+      ))}
     </div>
   );
 };

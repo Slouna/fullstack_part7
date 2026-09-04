@@ -70,6 +70,22 @@ blogsRouter.delete("/:id", userExtractor, async (request, response) => {
       .end();
   }
 });
+blogsRouter.post("/:id/comments", async (request, response) => {
+  const newComment = request.body.value;
+  const blog = await Blog.findById(request.params.id);
+  if (!blog) {
+    console.log("could not find the blog");
+    return response.status(404).end();
+  }
+  if (!newComment) {
+    console.log("no comment found");
+    return response.status(404).end();
+  }
+  blog.comments.push(newComment);
+  await blog.save();
+  await blog.populate("user");
+  response.status(201).json(blog);
+});
 
 blogsRouter.put("/:id", async (request, response) => {
   const updatedBlog = request.body;

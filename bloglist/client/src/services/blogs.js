@@ -26,7 +26,12 @@ const update = async (id, newObject) => {
   return response.data;
 };
 
-//korjaa response try catch
+const createComment = async (id, newComment) => {
+  const request = await axios.post(`${baseUrl}/${id}/comments`, newComment);
+  const response = request.data;
+  return response;
+};
+
 const deleteBlog = async (id) => {
   const config = {
     headers: { Authorization: token },
@@ -40,4 +45,4 @@ const deleteBlog = async (id) => {
   }
 };
 
-export default { getAll, create, update, setToken, deleteBlog };
+export default { getAll, create, update, setToken, deleteBlog, createComment };
