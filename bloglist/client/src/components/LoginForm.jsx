@@ -4,20 +4,20 @@ import { TextField, Button } from "@mui/material";
 import { useNotificationActions } from "../store";
 import { useUserActions } from "../store";
 import { useCurrentUser } from "../store";
+import { useField } from "../hooks";
 
 const LoginForm = (props) => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const username = useField("text");
+  const password = useField("password");
   const { setNotification, setSuccessStatus } = useNotificationActions();
   const { logIn } = useUserActions();
-  const user = useCurrentUser();
 
   const navigate = useNavigate();
 
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
-      const loggedUser = await logIn(username, password);
+      const loggedUser = await logIn(username.value, password.value);
 
       await setSuccessStatus(true);
       await setNotification(`${loggedUser.name} logged in`);
@@ -25,9 +25,6 @@ const LoginForm = (props) => {
       setTimeout(() => {
         setNotification(null);
       }, 5000);
-
-      setUsername("");
-      setPassword("");
 
       navigate("/");
     } catch (error) {
@@ -45,19 +42,12 @@ const LoginForm = (props) => {
       <h2>Login page</h2>
       <form onSubmit={handleLogin}>
         <div>
-          <TextField
-            label="Username"
-            value={username}
-            onChange={({ target }) => setUsername(target.value)}
-          />
+          Username
+          <input {...username} />
         </div>
         <div>
-          <TextField
-            label="Password"
-            type="password"
-            value={password}
-            onChange={({ target }) => setPassword(target.value)}
-          />
+          Password
+          <input {...password} />
         </div>
         <Button type="submit" variant="contained" style={{ marginTop: 10 }}>
           login

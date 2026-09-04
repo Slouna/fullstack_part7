@@ -1,9 +1,8 @@
 import { Link } from "react-router-dom";
-import { useBlogs, useCurrentUser } from "../store";
+import { useBlogs } from "../store";
 
 const MainPage = () => {
   const blogs = useBlogs();
-  const user = useCurrentUser();
 
   return (
     <div className="app">

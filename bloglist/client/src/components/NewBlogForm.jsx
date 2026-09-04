@@ -3,27 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
 import { useBlogActions } from "../store";
 import { useNotificationActions } from "../store";
+import { useField } from "../hooks";
 
 const NewBlogForm = () => {
   const navigate = useNavigate();
   const { add } = useBlogActions();
   const { setNotification, setSuccessStatus } = useNotificationActions();
 
-  const [blogTitle, setBlogTitle] = useState("");
-  const [blogAuthor, setBlogAuthor] = useState("");
-  const [blogUrl, setBlogUrl] = useState("");
+  const blogTitle = useField("text");
+  const blogAuthor = useField("text");
+  const blogUrl = useField("text");
 
   const addBlog = async (event) => {
     event.preventDefault();
+    console.log(blogTitle);
     try {
       await add({
-        title: blogTitle,
-        author: blogAuthor,
-        url: blogUrl,
+        title: blogTitle.value,
+        author: blogAuthor.value,
+        url: blogUrl.value,
       });
       await setSuccessStatus(true);
       await setNotification(
-        `A new blog: ${blogTitle}, by ${blogAuthor} added to to blog list!`,
+        `A new blog: ${blogTitle.value}, by ${blogAuthor.value} added to to blog list!`,
       );
       setTimeout(() => {
         setNotification(null);
@@ -36,10 +38,6 @@ const NewBlogForm = () => {
         setNotification(null);
       }, 5000);
     }
-
-    setBlogTitle("");
-    setBlogAuthor("");
-    setBlogUrl("");
     navigate("/");
   };
 
@@ -48,25 +46,21 @@ const NewBlogForm = () => {
       <h2>Create a new blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          <TextField
-            label="Title"
+          Title
+          <input {...blogTitle} />
+        </div>
 
-            value={blogTitle}
-            onChange={(event) => setBlogTitle(event.target.value)}
-          />
-          <p></p>
-          <TextField
-            label="Author"
-            value={blogAuthor}
-            onChange={(event) => setBlogAuthor(event.target.value)}
-          />
-          <p></p>
-          <TextField
-            label="URL"
-            value={blogUrl}
-            onChange={(event) => setBlogUrl(event.target.value)}
-          />
-
+        <p></p>
+        <div>
+          Author
+          <input {...blogAuthor} />
+        </div>
+        <p></p>
+        <div>
+          Url
+          <input {...blogUrl} />
+        </div>
+        <div>
           <p>
             <Button type="submit" variant="contained">
               Create
