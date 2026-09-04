@@ -8,13 +8,16 @@ import { AppBar, Container, Toolbar, Button } from "@mui/material";
 import MainPage from "./components/MainPage";
 import ErrorBoundary from "./components/ErrorBoundary";
 import SplatRoute from "./components/SplatRoute";
+import User from "./components/User";
 import {
   useBlogs,
   useNotificationActions,
-  useUserActions,
+  useCurrentUserActions,
   useBlogActions,
+  useUserActions,
 } from "./store";
 import { useCurrentUser } from "./store";
+import UserList from "./components/UserList";
 
 const App = () => {
   const blogs = useBlogs();
@@ -22,16 +25,21 @@ const App = () => {
   const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null;
   const { setNotification, setSuccessStatus } = useNotificationActions();
   const user = useCurrentUser();
-  const { logOut } = useUserActions();
-  const { initializeUser } = useUserActions();
+  const { logOut } = useCurrentUserActions();
+  const { initializeCurrentUser } = useCurrentUserActions();
   const { initialize } = useBlogActions();
+  const { initializeUsers } = useUserActions();
 
   useEffect(() => {
     initialize();
   }, [initialize]);
 
   useEffect(() => {
-    initializeUser();
+    initializeCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    initializeUsers();
   }, []);
 
   const handleLogOut = async () => {
@@ -60,6 +68,14 @@ const App = () => {
                   marginRight: 0,
                 }}
               >
+                <Button
+                  color="inherit"
+                  component={Link}
+                  to="/users"
+                  sx={hooverStyle}
+                >
+                  Users
+                </Button>
                 <Button
                   color="inherit"
                   component={Link}
@@ -108,6 +124,7 @@ const App = () => {
                 path="/blogs/:id"
                 element={blog ? <Blog /> : <p>Could not find a blog</p>}
               />
+              <Route path="/users/:id" element={<User />} />
 
               <Route
                 path="/login"
@@ -119,6 +136,7 @@ const App = () => {
               />
               <Route path="/create" element={<NewBlogForm />} />
               <Route path="/" element={<MainPage />} />
+              <Route path="/users" element={<UserList />} />
               <Route path="*" element={<SplatRoute />} />
             </Routes>
           </ErrorBoundary>

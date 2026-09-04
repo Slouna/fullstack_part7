@@ -3,6 +3,7 @@ import { devtools } from "zustand/middleware";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import persistentUser from "./services/persistentUser";
+import userService from "./services/users";
 
 const useNotificationStore = create((set) => ({
   notification: null,
@@ -17,7 +18,7 @@ const useCurrentUserStore = create(
   devtools((set, get) => ({
     user: null,
     actions: {
-      initializeUser: async () => {
+      initializeCurrentUser: async () => {
         const user = persistentUser.getUser();
         if (user !== null) {
           blogService.setToken(user.token);
@@ -38,7 +39,17 @@ const useCurrentUserStore = create(
     },
   })),
 );
-
+const useUserStore = create(
+  devtools((set) => ({
+    users: [],
+    actions: {
+      initializeUsers: async () => {
+        const users = await userService.getAll();
+        set(() => ({ users }));
+      },
+    },
+  })),
+);
 const useBlogStore = create(
   devtools((set, get) => ({
     blogs: [],
@@ -82,5 +93,7 @@ export const useNotificationActions = () =>
 export const useBlogs = () => useBlogStore((state) => state.blogs);
 export const useBlogActions = () => useBlogStore((state) => state.actions);
 export const useCurrentUser = () => useCurrentUserStore((state) => state.user);
-export const useUserActions = () =>
+export const useCurrentUserActions = () =>
   useCurrentUserStore((state) => state.actions);
+export const useUsers = () => useUserStore((state) => state.users);
+export const useUserActions = () => useUserStore((state) => state.actions);

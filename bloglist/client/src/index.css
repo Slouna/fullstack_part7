@@ -46,3 +46,16 @@
   padding: 1%;
   margin-top: 2%;
 }
+.userCard {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin-left: auto;
+  margin-right: auto;
+  width: 95%;
+  border-radius: 10px;
+  border-color: black;
+  border-style: solid;
+  padding: 1%;
+  margin-top: 2%;
+}

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextField, Button } from "@mui/material";
 import { useNotificationActions } from "../store";
-import { useUserActions } from "../store";
+import { useCurrentUserActions } from "../store";
 import { useCurrentUser } from "../store";
 import { useField } from "../hooks";
 
@@ -10,7 +10,7 @@ const LoginForm = (props) => {
   const username = useField("text");
   const password = useField("password");
   const { setNotification, setSuccessStatus } = useNotificationActions();
-  const { logIn } = useUserActions();
+  const { logIn } = useCurrentUserActions();
 
   const navigate = useNavigate();
 
