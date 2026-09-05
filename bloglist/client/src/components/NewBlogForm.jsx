@@ -42,23 +42,20 @@ const NewBlogForm = () => {
   };
 
   return (
-    <div>
+    <div className="app">
       <h2>Create a new blog</h2>
       <form onSubmit={addBlog}>
         <div>
-          Title
-          <input {...blogTitle} />
+          <input {...blogTitle} placeholder="Title" className="inputForm" />
         </div>
 
         <p></p>
         <div>
-          Author
-          <input {...blogAuthor} />
+          <input {...blogAuthor} placeholder="Author" className="inputForm" />
         </div>
         <p></p>
         <div>
-          Url
-          <input {...blogUrl} />
+          <input {...blogUrl} placeholder="URL" className="inputForm" />
         </div>
         <div>
           <p>

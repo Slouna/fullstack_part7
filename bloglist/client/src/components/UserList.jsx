@@ -14,10 +14,10 @@ const UserList = () => {
   //console.log(users);
 
   return (
-    <div>
+    <div className="app">
       <h2>Users</h2>
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+      <TableContainer component={Paper} style={{ flex: 1 }}>
+        <Table aria-label="simple table">
           <TableHead>
             <TableRow>
               <TableCell style={{ fontWeight: "bold" }}>Name</TableCell>

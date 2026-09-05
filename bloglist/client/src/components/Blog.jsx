@@ -113,19 +113,35 @@ const Blog = () => {
         )}
       </div>
       <p style={{ fontSize: 25 }}>comments</p>
-      <form onSubmit={addComment}>
-        <div>
-          Add comment
-          <input {...newComment} />
-        </div>
-        <Button type="submit" variant="contained">
-          Send
-        </Button>
-      </form>
+      {userId && (
+        <form onSubmit={addComment}>
+          <div>
+            <input
+              {...newComment}
+              placeholder="Add comment"
+              className="inputForm"
+            />
+          </div>
+          <Button type="submit" variant="contained">
+            Send
+          </Button>
+        </form>
+      )}
 
       {blog.comments.map((comment) => (
-        <div key={comment}>
-          <li key={comment}>{comment}</li>
+        <div key={comment} style={{ padding: 10 }}>
+          <li
+            key={comment}
+            style={{
+              listStyle: "none",
+              borderBottom: "solid",
+              borderBottomWidth: 0.5,
+              marginLeft: 10,
+              marginRight: 10,
+            }}
+          >
+            {comment}
+          </li>
         </div>
       ))}
     </div>
